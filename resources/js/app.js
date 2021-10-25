@@ -1,6 +1,7 @@
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
 const asset = document.querySelector("meta[name='asset']").content;
+import bootstrap from 'bootstrap';
 
 createInertiaApp({
   resolve: name => import(`./Pages/${name}`),

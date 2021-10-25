@@ -3,7 +3,10 @@
   <div class="app app-signup p-0">
     <auth name="Log in">
       <div class="auth-form-container text-start mx-auto">
-        <form class="auth-form auth-signup-form" @submit.prevent="form.post($route('register'))">
+        <form
+          class="auth-form auth-signup-form"
+          @submit.prevent="form.post($route('register'))"
+        >
           <div class="email mb-3">
             <label class="sr-only" for="signup-email">Your Name</label>
             <input
@@ -14,6 +17,9 @@
               placeholder="Full name"
               v-model="form.name"
             />
+            <span class="fw-bold text-danger" v-if="form.errors.name">
+              {{ form.errors.name[0] }}
+            </span>
           </div>
           <div class="email mb-3">
             <label class="sr-only" for="signup-email">Your Email</label>
@@ -23,8 +29,11 @@
               type="text"
               class="form-control signup-email"
               placeholder="Email"
-               v-model="form.email"
+              v-model="form.email"
             />
+            <span class="fw-bold text-danger" v-if="form.errors.email">
+              {{ form.errors.email[0] }}
+            </span>
           </div>
           <div class="password mb-3">
             <label class="sr-only" for="signup-password">Password</label>
@@ -36,6 +45,9 @@
               placeholder="Create a password"
               v-model="form.password"
             />
+            <span class="fw-bold text-danger" v-if="form.errors.password">
+              {{ form.errors.password[0] }}
+            </span>
           </div>
           <div class="extra mb-3">
             <div class="extra my-3 row justify-content-between">
@@ -48,20 +60,6 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                value=""
-                id="RememberPassword"
-              />
-              <label class="form-check-label" for="RememberPassword">
-                I agree to Portal's
-                <a href="#" class="app-link">Terms of Service</a>
-                and
-                <a href="#" class="app-link">Privacy Policy</a>.
-              </label>
-            </div> -->
           </div>
 
           <div class="text-center">
@@ -85,18 +83,18 @@
 
 <script>
 import Auth from "../../layouts/Auth";
-import { Link, Head,useForm } from "@inertiajs/inertia-vue3";
+import { Link, Head, useForm } from "@inertiajs/inertia-vue3";
 import { useShowHide } from "../../composition/auth";
 
 export default {
   components: { Auth, Link, Head },
   setup() {
     const { isHide, toggleHide } = useShowHide();
-    
+
     const form = useForm({
-        email:null,
-        password:null,
-        name:null,
+      email: null,
+      password: null,
+      name: null,
     });
 
     return {

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Photo;
 use Illuminate\Http\Request;
+use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 
 class PhotoController extends Controller
 {
@@ -12,19 +14,30 @@ class PhotoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return inertia('photos/Index');
-    }
+        $categories = Category::select('id', 'name')->get();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+
+        $photos = Photo::query();
+
+
+
+        $photos = Photo::with([
+            'user:id,name',
+            'category:id,name'
+        ]);
+
+
+        if ($request->category_id && $request->category_id != 'all') {
+            $photos->where('category_id', $request->category_id);
+        }
+
+        
+        return inertia('photos/Index', [
+            'photos' => $photos->paginate(4),
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -35,7 +48,22 @@ class PhotoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'category_id' => 'required',
+            'file_name' => 'required',
+        ]);
+
+        $create = $request->only('name', 'category_id');
+
+        $create['user_id'] = Auth::id();
+        $create['file_name'] = Auth::id() . "_" . time() . "." . $request->file_name->extension();
+
+        $request->file_name->move(public_path("images/photos/"), $create['file_name']);
+
+        $created = Photo::create($create);
+
+        return redirect()->route('photos.index');
     }
 
     /**
@@ -46,7 +74,12 @@ class PhotoController extends Controller
      */
     public function show(Photo $photo)
     {
-        //
+        $photo->load([
+            'user:id,name',
+            'category:id,name'
+        ]);
+
+        return inertia('photos/Show', compact('photo'));
     }
 
     /**
@@ -69,7 +102,13 @@ class PhotoController extends Controller
      */
     public function update(Request $request, Photo $photo)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'category_id' => 'required',
+        ]);
+
+        $photo->update($request->only('name','category_id'));
+        return redirect()->route('photos.index');
     }
 
     /**
@@ -80,6 +119,7 @@ class PhotoController extends Controller
      */
     public function destroy(Photo $photo)
     {
-        //
+        $photo->delete();
+        return redirect()->route('photos.index');
     }
 }

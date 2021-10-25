@@ -22,4 +22,4 @@ Route::middleware('auth')->get('/',function(){
 })->name('home');
 
 
-Route::resource('photos', PhotoController::class);
+Route::resource('photos', PhotoController::class)->middleware('auth');

@@ -15,7 +15,7 @@
               v-model="form.email"
             />
             <span class="fw-bold text-danger" v-if="form.errors.email">
-              {{ form.errors.email }}
+              {{ form.errors.email[0] }}
             </span>
           </div>
           <div class="password mb-3">
@@ -28,6 +28,9 @@
               placeholder="Password"
               v-model="form.password"
             />
+            <span class="fw-bold text-danger" v-if="form.errors.password">
+              {{ form.errors.password[0] }}
+            </span>
             <div class="extra mt-3 row justify-content-between">
               <div class="col-6">
                 <div class="form-check">
